@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BYTEMARKET — Artefactos Tecnológicos</title>
+<style>
+  :root{
+    --accent: #00d2ff;
+    --accent-2: #c42ab7d8;
+    --bg-dark: #0b0f12;
+    --card-bg: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.06);
+    --text: #e6eef2;
+    --muted: #9dbecb;
+    --header-h: 86px;
+    --max-w: 1200px;
+  }
+
+  /* Reset base */
+  *{box-sizing:border-box}
+  html,body{height:100%; margin:0; font-family:Inter, Roboto, Arial, sans-serif; color:var(--text)}
+  body{
+    background: linear-gradient(180deg, rgba(10,14,18,0.85), rgba(8,10,12,0.85));
+    background-size: cover;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* Page container (centra y limita ancho) */
+  .page {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 12px;
+  }
+
+  /* TOP BAR and Banner area */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 12px 24px;
+    gap:16px;
+    background: linear-gradient(90deg, rgba(2,6,8,0.6), rgba(12,18,20,0.6));
+    backdrop-filter: blur(6px);
+    z-index: 1200;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .brand {
+    display:flex; align-items:center; gap:12px;
+  }
+  .brand img.logo {height:56px; width:56px; object-fit:cover; border-radius:10px; box-shadow: 0 6px 18px rgba(0,0,0,0.6);}
+  .brand h1{margin:0; font-size:20px; letter-spacing:1px;}
+  .brand small{display:block; color:var(--muted); font-size:12px}
+
+  /* Banner slot below topbar (space to place your banner graphic) */
+  .banner-slot {
+    margin-top: calc(var(--header-h) + 10px);
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+  .banner {
+    width:100%;
+    max-width: var(--max-w);
+    height: 180px;
+    border-radius: 12px;
+    overflow:hidden;
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .banner img { width:100%; height:100%; object-fit:cover; display:block; }
+
+  .banner .overlay-text {
+    position:absolute; left:24px; bottom:18px; color:#fff; text-shadow:0 6px 18px rgba(0,0,0,0.6);
+    font-weight:700; font-size:20px;
+  }
+
+  /* Header controls: search and actions */
+  .top-controls { display:flex; gap:12px; align-items:center; }
+  .search {
+    display:flex; align-items:center; gap:0; background:var(--glass); padding:6px; border-radius:8px; overflow:hidden;
+  }
+  .search input{ border:0; outline:none; background:transparent; color:var(--text); padding:8px 10px; min-width:220px; }
+  .search button{ background:var(--accent); border:0; color:#000; padding:8px 12px; font-weight:700; cursor:pointer; border-radius:8px; }
+
+  .icon-btn {
+    background:transparent; border:0; color:var(--text); cursor:pointer; padding:8px; border-radius:8px; position:relative;
+  }
+  .cart-count { position:absolute; top:4px; right:4px; background:#ff4b5c; color:white; font-size:12px; padding:2px 6px; border-radius:999px; }
+
+  /* Main content */
+  main { margin-top:14px; padding:18px 12px 60px; }
+
+  .hero {
+    display:flex; gap:18px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .hero .text { flex:1; min-width:260px; color:var(--text); }
+  .hero h2{ margin:0 0 8px 0; font-size:28px;}
+  .hero p{ margin:0; color:var(--muted) }
+
+  /* Carousel */
+  .carousel {
+    width:520px; max-width:100%; height:260px; border-radius:12px; overflow:hidden; background:#0e1113; position:relative; box-shadow:0 8px 26px rgba(0,0,0,0.6);
+  }
+  .carousel img { width:100%; height:100%; object-fit:cover; display:block; }
+  .carousel .arrow { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:0; width:42px; height:42px; border-radius:10px; cursor:pointer; }
+  .carousel .arrow.left{ left:12px }
+  .carousel .arrow.right{ right:12px }
+
+  /* Product grid */
+  .products { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px; margin-top:18px; }
+  .card {
+    background: var(--card-bg); border-radius:12px; padding:12px; box-shadow: 0 8px 22px rgba(0,0,0,0.6);
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .card img { width:100%; height:150px; object-fit:cover; border-radius:8px; }
+  .card h3{ margin:6px 0 0 0; font-size:16px; }
+  .card .meta { color:var(--muted); font-size:13px; }
+  .card .price { color:var(--accent); font-weight:800; margin-top:6px; }
+  .card .actions { margin-top:auto; display:flex; gap:8px; }
+
+  .btn { border:0; padding:9px 12px; border-radius:10px; cursor:pointer; font-weight:700; }
+  .btn.primary { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color:#000; }
+  .btn.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--text); }
+
+  /* Cart panel */
+  .cart-panel {
+    position:fixed; right:18px; top:calc(var(--header-h) + 14px); width:360px; max-height:70vh; overflow:auto;
+    background:linear-gradient(180deg, rgba(10,14,18,0.95), rgba(8,10,12,0.95)); padding:12px; border-radius:12px; box-shadow:0 18px 50px rgba(0,0,0,0.6);
+    z-index:1300; display:none;
+  }
+  .cart-item { display:flex; gap:10px; align-items:center; margin-bottom:10px; }
+  .cart-item img{ width:64px; height:64px; object-fit:cover; border-radius:8px; }
+
+  /* Chatbot */
+  .chat-toggle { position:fixed; right:18px; bottom:18px; z-index:1400; border-radius:999px; border:0; padding:12px 14px; cursor:pointer; background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#000; font-weight:800; box-shadow:0 12px 30px rgba(0,0,0,0.4); }
+  .chatbox {
+    position:fixed; right:18px; bottom:82px; width:360px; max-width:calc(100% - 40px); border-radius:12px; overflow:hidden; z-index:1400;
+    box-shadow:0 18px 50px rgba(0,0,0,0.6); display:none;
+  }
+  .chatbox .head { background:linear-gradient(90deg,#071017,#0a1b23); padding:10px; display:flex; gap:8px; align-items:center; color:var(--text) }
+  .chatbox .messages { background:#061016; padding:12px; height:300px; overflow:auto; color:var(--muted); }
+  .chatbox .composer { display:flex; gap:8px; padding:10px; background:linear-gradient(#041018,#071418); }
+  .chatbox input{ flex:1; padding:10px; border-radius:8px; border:0; outline:none; background:rgba(255,255,255,0.03); color:var(--text) }
+
+  /* Footer */
+  footer{ margin-top:32px; padding:22px 12px; text-align:center; color:var(--muted); border-top:1px solid rgba(255,255,255,0.03) }
+  footer .socials img { width:28px; height:28px; margin:0 6px; opacity:0.95; vertical-align:middle; }
+
+  /* small screens */
+  @media (max-width:900px){
+    .hero { flex-direction:column; align-items:stretch; }
+    .carousel { height:200px; }
+    .banner { height:140px; }
+    .chatbox { right:12px; left:12px; }
+  }
+
+  /* small utilities */
+  .muted { color:var(--muted) }
+  .hidden { display:none }
+  .center { text-align:center }
+</style>
+</head>
+<body id="pageBody">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <!-- LOGO: Reemplaza src por tu logo plateado (conejo + zorro) -->
+    <img class="logo" id="logoSmall" src="ZORRO.PNG" alt="ByteMarket Logo">
+    <div>
+      <h1>BYTEMARKET</h1>
+      <small>PRODUCTOS TECNOLÓGICOS</small>
+    </div>
+  </div>
+
+  <!-- BÚSQUEDA y CONTROLES -->
+  <div class="top-controls">
+    <div class="search" role="search" aria-label="Buscar productos">
+      <input id="searchInput" type="search" placeholder="Busqueda " />
+      <button onclick="doSearch()">Buscar</button>
+    </div>
+
+    <!-- Botón cambiar fondo (abre prompt / upload) -->
+      <!-- Carrito -->
+      <button class="icon-btn" title="Abrir carrito" onclick="toggleCart()" aria-label="Carrito">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN PAGE CONTENT -->
+<div class="page">
+
+  <!-- BANNER SLOT: coloca aquí el banner superior (reemplaza src) -->
+  <div class="banner-slot">
+    <div class="banner" id="mainBanner" role="banner" aria-label="Banner principal">
+      <!-- Cambia la imagen por tu banner profesional (plateado con artefactos saliendo de cajas) -->
+      <img id="bannerImg" src="zorro 8.PNG" alt="Banner BYTEMARKET">
+      <div class="overlay-text"></div>
+    </div>
+  </div>
+
+  <!-- HERO (texto + carousel) -->
+  <main>
+    <section class="hero">
+      <div class="text">
+        <h2>LA MEJOR SELECCIÓN DE ARTÍCULOS Y COMPONENTES </h2>
+        <p class="muted">"Descubre el poder de la tecnología con nuestra exclusiva selección de artefactos innovadores. Desde computadoras y smartphones hasta accesorios inteligentes, tenemos todo lo que necesitas para trabajar, crear y disfrutar. Productos de alta calidad, precios irresistibles y atención personalizada para que vivas la mejor experiencia de compra. ¡Conéctate con el futuro hoy mismo!".</p>
+      </div>
+
+      <!-- CAROUSEL CONTROLADO -->
+      <div class="carousel" id="carousel">
+        <button class="arrow left" onclick="carouselPrev()">‹</button>
+        <button class="arrow right" onclick="carouselNext()">›</button>
+        <!-- slides container -->
+        <div id="slides" style="width:100%; height:100%; display:flex; transition:transform 0.6s ease;">
+          <!-- Reemplaza las imágenes por las tuyas -->
+          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop&s=8e2b8d3b0f4c5b68c0a9a5a2a6a1d2f3" alt="slide1" style="min-width:100%;"/>
+          <img src="https://www.honor.com/content/dam/honor/common/product-list/wearables/laptops-list-others/honor-watch-5/honor-watch-5-pc.jpg" alt="slide2" style="min-width:100%;"/>
+          <img src="https://media.istockphoto.com/id/1314343964/es/foto/unidad-de-sistema-de-gama-alta-para-el-primer-plano-de-la-computadora-de-juego.jpg?s=612x612&w=0&k=20&c=7Cfcch_4i5Liu4Nue-5avlqbBFDppoIHdRO_poTcyUc=" alt="slide3" style="min-width:100%;"/>
+          <img src="https://cdn.mos.cms.futurecdn.net/UcL9HbAeeruKm53EjA3a8o.jpg" alt="slide1" style="min-width:100%;"/>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS DESTACADOS -->
+    <section>
+      <h3 style="margin:14px 0 6px 0;">NUESTROS PRODUCTOS</h3>
+      <div class="products" id="productGrid">
+        <!-- Cards generadas por JS -->
+      </div>
+    </section>
+
+    <!-- CTA / Información -->
+    <section style="margin-top:18px; padding:16px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px;">
+      <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="max-width:900px; margin:0 auto;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <div class="muted">© <span id="year"></span> BYTEMARKET TIENDA ONLINE TECNOLÓGICA PERUANA Y&M </div>
+        <div class="socials">
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div> <!-- end page -->
+
+<!-- CART PANEL -->
+<div class="cart-panel" id="cartPanel" aria-hidden="true">
+  <h3>Mi carrito</h3>
+  <div id="cartItems"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+    <strong>Total: <span id="cartTotal">S/ 0.00</span></strong>
+    <div>
+      <button class="btn ghost" onclick="clearCart()">Vaciar</button>
+      <button class="btn primary" onclick="checkout()">Pagar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOX -->
+<div class="chatbox" id="chatbox">
+  <div class="head">
+    <img src="zorro45.png" alt="bot" style="height:40px; width:40px; border-radius:8px;"/>
+    <div>
+      <div style="font-size:500">BYTECHAT</div>
+      <div style="font-size:12px; color:var(--muted)">ASISTENTE ONLINE</div>
+    </div>
+    <div style="margin-left:auto">
+      <button class="icon-btn" onclick=" closeChat()" aria-label="Cerrar chat">✕</button>
+    </div>
+  </div>
+  <div class="messages" id="chatMessages">
+    <div style="margin-bottom:8px; color:var(--muted)">Hola soy ByteChat 👋  ¿En qué puedo ayudarte?</div>
+  </div>
+  <div class="composer">
+    <input id="chatInput" placeholder="Escribe tu mensaje..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+    <button class="btn primary" onclick="sendChatMessage()">Enviar</button>
+  </div>
+</div>
+<button class="chat-toggle" id="chatToggle" onclick="openChat()">Chat</button>
+
+<script>
+/* -------------------- DATOS Y CONFIG -------------------- */
+const products = [
+  {id:1, title:"Smartwatch S9 Pro 49MM Rosado", price:60.00, img:"https://besmart.com.pe/wp-content/uploads/2024/01/1108659.jpg", desc:" Este smartwatch combina un diseño moderno en un elegante color rosado ideal para una visualización clara y vibrante."},
+  {id:2, title:"Smartwatch HK9 Ultra 2 Azul", price:79.99, img:"https://http2.mlstatic.com/D_NQ_NP_807083-MPE77476092288_072024-O-smart-watch-hk9-ultra-2-max-orange-y-correa-titanio-eslabon.webp", desc:"Con su atractivo color azul y una carcasa robusta, este smartwatch está pensado para quienes buscan estilo y resistencia en un solo dispositivo."},
+  {id:3, title:" Smart Watch Lige Y80", price:99.00, img:"https://sc04.alicdn.com/kf/H2b56410958d34fc19fa8db1e0f368ba2e.jpg", desc:"Estilo y tecnología en tu muñeca. Con pantalla HD, monitoreo de salud, múltiples modos deportivos, notificaciones inteligentes y batería de larga duración. Ideal para un estilo de vida activo y moderno."},
+  {id:2, title:"Smartwatch Pro", price:75.00, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG6wXMPJbn77P0s_5QGSIkKmWtIyuvI-y0cpjNneMfqRKbjbOb-9NotIhbkz4pmjUO8dA&usqp=CAU", desc:"Potencia y estilo en un diseño compacto. Pantalla AMOLED, monitoreo avanzado de salud, GPS integrado, resistencia al agua y batería duradera para acompañarte todo el día."},
+  {id:3, title:"Smart Watch SW01 WIWU", price:89.00, img:"https://i0.wp.com/icenter.pe/wp-content/uploads/2022/08/smart-watch-sw01.webp?fit=800%2C800&ssl=1", desc:"Diseño elegante con pantalla HD, monitoreo de salud, modos deportivos, notificaciones inteligentes y batería de larga duración, ideal para uso diario y actividades físicas."},
+  {id:1, title:"Smart Watch Serie 8 Negro", price:65.00, img:"https://plazavea.vteximg.com.br/arquivos/ids/25895416-418-418/image-5848d56399be4ae7a0e23291623885e1.jpg", desc:" Estilo moderno con pantalla HD, funciones de salud y deporte, notificaciones inteligentes y batería de larga duración en un diseño elegante y resistente."},
+  {id:2, title:"Smartwatch imoo Z1", price:89.99, img:"https://imoostore.in/cdn/shop/files/Smart_Watch_for_Kids_-_imoo_Z1_Watchphone_Beauty_Shots.webp?v=1736400914&width=1024", desc:"Reloj inteligente para niños con llamadas, GPS en tiempo real, resistencia al agua y diseño seguro, ideal para mantener comunicación y tranquilidad en todo momento."},
+  {id:3, title:"C60 1.1 inch Waterproof Smart Watch ", price:109.00, img:"https://www.mytrendyphone.eu/images/C60-1-1-inch-Waterproof-Smart-Watch-Heart-Rate-Blood-Oxygen-Monitor-Body-Temperature-Detection-Fitness-Tracker-Sports-Smart-Wristband-PinkNone-22112023-00-p.webp", desc:"Compacto, resistente al agua, con monitoreo de salud, modos deportivos, notificaciones inteligentes y batería de larga duración para acompañarte en cualquier actividad"},
+  {id:2, title:"Laptop Asus Gl704g I7 8750h", price:1800.00, img:"https://m.media-amazon.com/images/I/819eEa12qOL.jpg", desc:"Potente laptop gamer con procesador Intel Core i7 de 8ª generación, pantalla grande y nítida, tarjeta gráfica dedicada y rendimiento óptimo para juegos y tareas exigentes."},
+  {id:1, title:"Laptop Gaming Asus Terjangkau ", price:2500.00, img:"https://cdn.shopify.com/s/files/1/0827/4195/2811/files/ASUS-ROG-Strix-G18-G814JIR_480x480.png?v=1715624746", desc:"Rendimiento sólido para juegos con diseño moderno, pantalla de alta calidad y componentes optimizados, todo a un precio accesible."},
+  {id:2, title:"Ryan Laptop", price:2450.99, img:"https://cdn.shopify.com/s/files/1/0827/4195/2811/files/Gigabyte-AORUS-17X-AXF-7271_480x480.png?v=1696022944", desc:" Dispositivo portátil con alto rendimiento, pantalla de calidad y batería duradera, ideal para trabajo, estudio y entretenimiento."},
+  {id:3, title:"LAPTOP GAMER HP PAVILION", price:3009.00, img:"https://compusystemperu.com/wp-content/uploads/2021/08/15-dk1504la-1.jpg", desc:"Potente rendimiento para juegos con procesador de alto nivel, gráficos dedicados, pantalla nítida y diseño moderno pensado para gamers."},
+  {id:1, title:"HP OMEN Gaming", price:2999.00, img:"https://m.media-amazon.com/images/I/71DN+hiZcPL._UF1000,1000_QL80_.jpg", desc:"Laptop gamer de alto rendimiento con potentes procesadores, gráficos dedicados, pantalla de alta frecuencia y diseño premium para una experiencia de juego fluida y envolvente."},
+  {id:2, title:"LAPTOP GAMER MSI KATANA ", price:4059.99, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt-qBxyCWZLxmJg4UwFxohOXGbucN4rrb44Q&s", desc:" Rendimiento letal para gamers con procesador de última generación, tarjeta gráfica dedicada, pantalla rápida y diseño agresivo listo para la batalla."},
+  {id:3, title:"LAPTOP GAMER MSI ", price:3079.00, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUXWmRI5I9XhW92s0R9mpRtnXHNrrDKMRCaw&s", desc:"Potencia y velocidad para juegos exigentes, con procesador avanzado, gráficos dedicados, pantalla de alta frecuencia y diseño pensado para verdaderos gamers."},
+  {id:1, title:"Laptop Gamer Lenovo Legion 5i", price:2099.00, img:"https://realplaza.vtexassets.com/arquivos/ids/31636863/image-f7c44373a21344ed9f862b21d0d5e3fe.jpg?v=638108638497870000", desc:"Diseñada para ofrecer un rendimiento de élite, integra procesadores Intel® Core™ de última generación y tarjetas gráficas dedicadas NVIDIA® GeForce® para una experiencia de juego fluida y envolvente."},
+  {id:2, title:"Teclado Gamer ShotGaming 900", price:1200.00, img:"https://www.lidertek.uy/wp-content/uploads/2024/10/5494_22_9a14dd9b358e4237bd909f606166f070-300x300.jpg", desc:" Diseñado para la precisión y velocidad que todo jugador necesita, con teclas mecánicas de respuesta rápida, retroiluminación RGB personalizable y estructura resistente para largas sesiones de juego. Ergonomía y durabilidad que elevan tu rendimiento al máximo nivel."},
+  {id:3, title:"TECLADO GAMER GAMEMAX", price:599.00, img:"https://ac-resources.nyc3.cdn.digitaloceanspaces.com/images/products/32156_20240603_172412.png", desc:" Retroiluminación RGB, respuesta rápida y diseño resistente para una experiencia de juego precisa y fluida."},
+{id:1, title:"Teclado Gamer SP Digital", price:299.00, img:"https://media.spdigital.cl/thumbnails/products/cd4gmue8_14f86972_thumbnail_256.png", desc:"Alto rendimiento con teclas de respuesta rápida, retroiluminación RGB personalizable y diseño ergonómico para mayor comodidad y precisión en cada partida."},
+  {id:2, title:"Teclado Gamer Usb Multimedia Evil Pc 572Eg", price:1009.99, img:"https://oechsle.vteximg.com.br/arquivos/ids/18966220-800-800/image-24a40f0f90194ddcab2880bd1326557e.jpg?v=638647442202400000", desc:"Teclado resistente con retroiluminación LED, teclas de respuesta rápida y funciones multimedia integradas, ideal para una experiencia de juego fluida y cómoda."},
+  {id:3, title:"Teclado Gamer Machenik K500F RGB", price:979.00, img:"https://www.infotec.com.pe/81753-large_default/teclado-gamer-machenike-k500f-rgb-switch-outemou-crystal-usb-k500f-b81-morado.jpg", desc:"Teclado mecánico de alto rendimiento con retroiluminación RGB personalizable, ideal para gaming competitivo. Ofrece switches precisos, diseño ergonómico y estructura resistente para máxima durabilidad y respuesta rápida."},
+{id:1, title:"Teclado Gamer Pro Con Cable Y Retroiluminación", price:999.00, img:"https://storage.googleapis.com/catalog-pictures-carrefour-es/catalog/pictures/hd_510x_/3701123993947_1.jpg", desc:"Diseñado para gamers exigentes, ofrece conexión estable por cable, retroiluminación vibrante y teclas de alta respuesta para una experiencia de juego precisa y envolvente."},
+  {id:2, title:"Teclado y Mouse Gamer Blanco Kit con Luces LED", price:1009.99, img:"https://todatecnologia.pe/wp-content/uploads/2022/04/teclado-gamer-aoas-blanco-1.jpg", desc:"Combo gamer elegante en color blanco con retroiluminación LED. Incluye teclado de alto rendimiento y mouse ergonómico, ideal para sesiones de juego intensas con estilo y precisión."},
+  {id:3, title:"Teclado gamer RGB SGK50 Sharkoon", price:379.00, img:"https://cdn.habitium.com/es/745818-large_default/teclado-gamer-rgb-60-color-negro-y-blanco-sgk50-sharkoon.jpg", desc:"Teclado mecánico premium con retroiluminación RGB personalizable, switches intercambiables y diseño compacto. Ideal para gamers que buscan rendimiento, durabilidad y estilo."},
+{id:1, title:"Auriculares Gamer Para Pc Con Microfono G2", price:599.00, img:"https://http2.mlstatic.com/D_NQ_NP_913122-MPE81275790312_122024-O-auriculares-gamer-para-pc-con-microfono-g2-luz-rgb-audifonos.webp", desc:"Sonido envolvente, micrófono ajustable y diseño cómodo para largas sesiones de juego. Ideales para una comunicación clara y una experiencia inmersiva."},
+  {id:2, title:"Auricular T-Dagger Sona T-RGH304 Pink/Rosa", price:1209.99, img:"https://mundofixar.vtexassets.com/arquivos/ids/2499491-800-auto?v=638790425809470000&width=800&height=auto&aspect=true", desc:"Diseño moderno en rosa, sonido envolvente y micrófono ajustable. Comodidad y estilo para una experiencia gamer única."},
+  {id:3, title:"Audífonos Gamer Onikuma K9 Con micrófono", price:599.00, img:"https://comprala.cl/cdn/shop/files/D_NQ_NP_2X_960522-MLU73420994437_122023-F.webp?v=1740080242&width=640", desc:"Sonido potente y envolvente, micrófono flexible con cancelación de ruido y diseño cómodo para jugar por horas con máxima inmersión."},
+{id:1, title:"Auriculares para gaming", price:1100.00, img:"https://i.blogs.es/25be06/auricularesjugonesap/1366_2000.jpg", desc:"Auriculares diseñados para gamers, con sonido envolvente, micrófono integrado, y diseño ergonómico para largas sesiones de juego. Compatibles con PC, consolas y móviles.."},
+  {id:2, title:"Auriculares GAMING Wireless & Bluetooth", price:559.99, img:"https://cdn.memorykings.pe/files/2021/10/29/333156-MK030467A.jpg", desc:"Auriculares inalámbricos para gaming con conectividad Bluetooth y 2.4GHz, sonido envolvente, micrófono incorporado y batería de larga duración. Libertad total y alto rendimiento sin cables."},
+  {id:3, title:"Auriculares GAMING Wireless & Bluetooth", price:579.00, img:"https://cdn.memorykings.pe/files/2020/12/19/327882-MK028245A.jpg", desc:"Diseñados para una experiencia de juego sin cables, ofrecen sonido envolvente, conexión dual (Bluetooth y 2.4GHz), micrófono de alta calidad y batería de larga duración para sesiones intensas.."},
+{id:1, title:"Audifonono Razer Blackshart V2 X White", price:490.00, img:"https://www.infotec.com.pe/90479-home_default/audifono-razer-blackshark-v2-x-white-rz04-03240700-r3u1-gaming-71.jpg", desc:"Auriculares gaming ligeros con sonido envolvente THX, micrófono cardioide de alta claridad y diseño ergonómico para comodidad prolongada. Perfectos para juegos competitivos."},
+  {id:2, title:"Audífonos Gamer Antryx Iris K Yellow 7.1 Virtual USB", price:459.99, img:"https://hiraoka.com.pe/media/catalog/product/1/3/135759-1.jpg?quality=80&bg-color=255,255,255&fit=bounds&height=300&width=240&canvas=240:300", desc:"Auriculares con sonido envolvente 7.1 virtual, conexión USB y diseño llamativo en amarillo. Micrófono integrado y comodidad para largas sesiones de juego."},
+  {id:3, title:"Mouse Gamer Inalámbrico Logitech G502 X Plus - Blanco", price:179.00, img:"https://pamas.com.pe/wp-content/uploads/2024/08/g502x-plus-w-2.jpg", desc:"Mouse inalámbrico de alta precisión con sensor HERO 25K, iluminación RGB personalizable y diseño ergonómico. Ideal para gamers que buscan rendimiento y libertad sin cables."},
+{id:1, title:"Mouse inlambrico Gamer X8K", price:299.00, img:"https://i.ebayimg.com/images/g/6pQAAOSwq3loIOU9/s-l1600.webp", desc:"Ratón gamer inalámbrico recargable con iluminación LED colorida, sensor de alta precisión y diseño ergonómico para mayor comodidad y rendimiento en tus partidas."},
+  {id:2, title:"Mouse  X1 Gamer", price:459.99, img:"https://s3.pagegear.co/4/articulos/61394/43550_700x933.jpg?2821063", desc:"Mouse gamer con diseño ergonómico, alta precisión y botones programables para una experiencia de juego fluida y cómoda. Ideal para jugadores que buscan rendimiento y control."},
+  {id:3, title:"Mouse Gamer RGB Logitech G203 Prodigy com Tecnologia LIGHTSYNC", price:579.00, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjCGLbX87GyHgLm6Ke0A0zt1bzJxPLouWeSgjfh9YDIq5-09iiX2XdmlYIjuvYdP5qpZA&usqp=CAU", desc:"Mouse gamer con iluminación RGB personalizable LIGHTSYNC, sensor óptico de alta precisión y diseño compacto. Perfecto para gamers que buscan rendimiento y estilo."},
+{id:1, title:"Mouse Gamer Inalambrico Q13 BLANCO", price:299.00, img:"https://f.fcdn.app/imgs/d804d8/woofer.com.uy/woofuy/15f2/original/catalogo/CONSQ13W-CONSQ13W_1/2000-2000/mouse-gamer-inalambrico-q13-blanco-mouse-gamer-inalambrico-q13-blanco.jpg", desc:"Mouse inalámbrico con diseño ergonómico en color blanco, iluminación LED, batería recargable y sensor de alta precisión. Combina estilo, comodidad y rendimiento para tus partidas."},
+  {id:2, title:"Mouse Gamer Profesional G5 6D ", price:980.99, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHUgd5hnDLn3FxzoEKFTo-KeGvqyEU2q5rd0OQeR4LPh7yVEnIa7-7M7ag66KyGzSMJgQ&usqp=CAU", desc:"Mouse Gamer Profesional G5 6D con 6 botones, alta precisión y diseño ergonómico para un mejor rendimiento en tus partidas."},
+  {id:3, title:"Mouse Gaming Matsuzay Silver Eagle G5 ", price:789.00, img:"https://i5.walmartimages.com/asr/bbca4c27-cdc4-4fc7-a40a-0dd9e9bf2f58.8106d425f6abec0c382312dca0736b07.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF", desc:"Mouse Gaming Matsuzay Silver Eagle G5, de alta precisión, diseño ergonómico e iluminación LED para una experiencia de juego fluida y cómoda."},
+{id:1, title:"Mouse Gaming Sakura G9", price:600.00, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH7s2BRFhOjsNPdj3gIBr46daAxmPaer9N-MjCiZT-Iv4thdFhCSJ3DxUMtlSNV6xmHSs&usqp=CAU", desc:"Diseño ergonómico, alta precisión y acabado elegante, ideal para combinar estilo y rendimiento en cada partida."},
+  {id:2, title:"Monitor Gamer Curvo MSI 23.6", price:1500.99, img:"https://blog.buscaditos.com/wp-content/uploads/2021/12/MSI-Optix-MEG381CQR-Plus.jpg", desc:"Con pantalla Full HD, 144Hz, 1ms de respuesta y diseño inmersivo para una experiencia de juego fluida y envolvente."},
+  {id:3, title:"Monitor Gamer UltraGear", price:1009.00, img:"https://www.lg.com/content/dam/channel/wcms/pe/images/monitores/27gr93u-b_awf_espr_pe_c/gallery/dz-3.jpg/_jcr_content/renditions/thum-1600x1062.jpeg", desc:"Con alta tasa de refresco, tiempo de respuesta ultra rápido y calidad de imagen superior para un rendimiento competitivo."},
+{id:1, title:"Monitor Gamer UltraGear™ UHD IPS, 1ms", price:1699.00, img:"https://www.lg.com/content/dam/channel/wcms/pe/images/monitores/27gr93u-b_awf_espr_pe_c/gallery/dz-9.jpg/_jcr_content/renditions/thum-1600x1062.jpeg", desc:"Con resolución 4K, colores vibrantes y precisos gracias a su panel IPS, tiempo de respuesta ultra rápido y tecnología avanzada para una experiencia de juego fluida y detallada."},
+  {id:2, title:"Monitor Gamer LG UltraGear 27GS65F-B", price:1229.99, img:"https://pcya.pe/wp-content/uploads/2024/11/27GS65F-3.png", desc:"Tasa de refresco de 180Hz, tiempo de respuesta de 1ms y tecnología AMD FreeSync Premium, diseñado para ofrecer imágenes fluidas, precisas y sin cortes en cada partida."},
+  {id:3, title:"Monitor ASUS TUF Gaming VG34VQL3A 34", price:1379.00, img:"https://pcya.pe/wp-content/uploads/2024/07/VG34VQL3A-5.png", desc:"con panel curvo UWQHD, tasa de refresco de 180Hz, 1ms de respuesta y tecnología Adaptive-Sync, diseñado para una experiencia de juego ultra fluida, inmersiva y sin desgarros de imagen."},
+{id:1, title:"ASUS TUF Gaming Monitor HDR", price:1100.00, img:"https://img.pacifiko.com/PROD/resize/1/500x500/Yzg3YThkM2.jpg", desc:"Ofrece colores más vivos, mayor contraste y detalles realistas, combinado con alta tasa de refresco y tiempo de respuesta rápido para una experiencia de juego inmersiva y fluida."},
+  {id:2, title:"Monitor Gamer Lenovo G24", price:1400.99, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9-2RBopNHD0jUghRhgD9iOkRlwsSSj6-DJNC8pFbNySPgJdwU490T7_gXt_twEsL-LRg&usqp=CAU", desc:"con pantalla de 23.8 Full HD 165Hz de refresco, 1ms de respuesta y tecnología AMD FreeSync Premium, ideal para juegos rápidos con imágenes fluidas, nítidas y sin cortes."},
+  {id:3, title:"Monitor Gigabyte 27", price:1230.00, img:"https://http2.mlstatic.com/D_NQ_NP_802569-MLA77486368133_072024-O.webp", desc:"Con resolución Full HD, panel IPS, 144Hz de refresco, 1ms de respuesta y tecnología AMD FreeSync Premium, que brinda colores precisos, movimientos fluidos y una experiencia de juego inmersiva."},
+{id:1, title:"Cpu Gamers Sakura K800", price:3900.00, img:"https://img.kwcdn.com/product/fancy/ce5c60df-3c32-4899-8588-bbd4430472d6.jpg?imageView2/2/w/500/q/60/format/webp", desc:"on diseño elegante y moderno, iluminación RGB personalizable y alto rendimiento, ideal para combinar potencia y estilo en cada partida."},
+  {id:2, title:"Cpu Gamer south white 500HM Z8", price:4599.99, img:"https://m.media-amazon.com/images/S/aplus-media-library-service-media/898a4305-aa13-4548-9311-e48d1338375f.__CR0,0,5000,3093_PT0_SX970_V1___.jpg", desc:"Con diseño minimalista y elegante.Equipada con ventiladores RGB multicolor para una iluminación vibrante Rendimiento potente y estable, ideal para juegos exigentes y multitarea."},
+  {id:3, title:"Cpu Gamer Amd Ryzen 5 8400F ", price:3779.00, img:"https://www.pcsystemstore.com.pe/wp-content/uploads/2025/06/8400F-2.jpg", desc:"Con alto rendimiento y eficiencia para juegos y tareas exigentes Ofrece 6 núcleos y 12 hilos para un procesamiento rápido y fluido.Ideal para configuraciones gaming modernas y multitarea avanzada."},
+{id:1, title:"Cpu Gamer Ryzen 9 5900x 12 ", price:2100.00, img:"https://http2.mlstatic.com/D_NQ_NP_619725-MLM75820681505_042024-O.webp", desc:"Diseñada para ofrecer un rendimiento extremo en juegos y tareas profesionales Velocidades de procesamiento ultra rápidas y excelente eficiencia energética Ideal para creadores de contenido y gamers que buscan potencia sin compromisos."},
+  {id:2, title:"Cpu Gamer Ryzen 7", price:1999.99, img:"https://http2.mlstatic.com/D_792985-MLM87353525389_072025-O.jpg", desc:"Equipada con múltiples núcleos e hilos para un desempeño rápido y eficiente Ideal para configuraciones de alto nivel que buscan velocidad, estabilidad y multitarea sin límites."},
+  {id:3, title:"Cpu Gamer Ryzen 5-5500", price:1709.00, img:"https://plazavea.vteximg.com.br/arquivos/ids/26103270/image-4b670f6f24e343c5878fb5e40a586279.jpg?v=638173865376600000", desc:"Ofrece velocidades rápidas y eficiencia energética para una experiencia fluida.Ideal para configuraciones gaming de gama media con excelente relación calidad-precio."},
+{id:1, title:"Cpu Gamer Ryzen 7 5700G 16GB", price:2000.00, img:"https://media.falabella.com/falabellaPE/137927297_02/w=800,h=800,fit=pad", desc:"Ofrece alto rendimiento y gráficos integrados Radeon para juegos sin tarjeta dedicada Incluye 16GB de memoria RAM para una multitarea fluida y rápida."},
+  {id:2, title:"Cpu Gamer Ryzen 3200 ", price:2500.00, img:"https://www.gamervision.com.pe/prax-archivos/gamervision/productos/759_142e78e1bf1.gif", desc:"Ideal para tareas diarias y juegos ligeros Incluye placa base compatible para un rendimiento estable y eficiente."},
+  {id:3, title:"SOOMFON Cámara web", price:479.00, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3C7fwfIGsQGHqld_EM24GRQJ5xODCWodZfILInId5Ihe95ZzawnYcIYRVMpRMm7w4WNs&usqp=CAU", desc:"Con resolución Full HD para imágenes nítidas y claras Micrófono integrado con reducción de ruido para una comunicación más precisa."},
+  {id:3, title:"Nisheng Cámara web con sensor de 8 M", price:899.00, img:"https://m.media-amazon.com/images/I/61sCdY9zTHL.jpg", desc:"ofrece imágenes de alta resolución y gran nitidez Equipada con micrófono integrado para un audio claro y natural."},
+  {id:4, title:"Cámara web USB Cámara web HD 1080P ", price:580.00, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF8HEceuUeljvLSv5GcGUxxNX5POmpnKD6F6mcNepH23gyZm2BNzHOXv0mtsRCxoArr_o&usqp=CAU", desc:"ofrece video nítido y fluido para una experiencia visual de alta calidad Incluye micrófono integrado con reducción de ruido para un sonido claro."},
+  {id:5, title:"Camara Webcam HP", price:339.50, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwT6pd9wpqxEI9SQh3ukxwXwrAX3ccZSG_LA&s", desc:"Con resolución HD para imágenes claras y definidas Micrófono integrado que ofrece audio nítido y sin interferencias."},
+  {id:5, title:"Camara Logitech Brio 500 Fhd 1080P", price:559.00, img:"https://gamecenterperu.com/wp-content/uploads/2023/12/GC03453_2.jpg", desc:"Con imagen nítida y colores vibrantes para videollamadas de alta calidad Cuenta con micrófonos duales con reducción de ruido para un audio claro."},
+  {id:5, title:"Camara Logitech Black 500 x8", price:559.00, img:"https://gamecenterperu.com/wp-content/uploads/2023/11/GC02448_1-768x768.jpg.webp", desc:"Cuenta con micrófonos duales con reducción de ruido para un audio claro Ideal para reuniones, streaming y creación de contenido profesional."},
+  {id:5, title:"Camara Sony ps4", price:489.00, img:"https://ae01.alicdn.com/kf/S8ba3512da52b4d7ca90d53c3d79405c3f/Somatosensory-camera-for-Sony-PS4-PS5-PSVR-VR-game-console-PlayStation-Camera-Version-2-Adapt-Official.jpg", desc:"Diseñada para capturar video en alta calidad y mejorar la experiencia de juego Incluye micrófonos integrados para un audio claro y preciso."},
+  {id:6, title:"Camara Web FHD Game Factor WG400", price:829.90, img:"https://ddtech.mx/assets/uploads/fe1dfdb5a320e87e9a505e144ab5b705.jpg", desc:"Con resolución 1080P para imágenes claras y fluidas incluye micrófono integrado con reducción de ruido para un audio nítido ideal para streaming, videollamadas y contenido gamer de alta calidad."}
+];
+const CART_KEY = 'bytemarket_cart_v1';
+let currentSlide = 0;
+let slideInterval;
+
+/* -------------------- UTILIDADES -------------------- */
+function setYear(){ document.getElementById('year').textContent = new Date().getFullYear(); }
+function formatPrice(n){ return 'S/ ' + n.toFixed(2); }
+
+/* -------------------- RENDER PRODUCTOS -------------------- */
+function renderProducts(list = products){
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  list.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${p.img}" alt="${p.title}">
+      <h3>${p.title}</h3>
+      <div class="meta">${p.desc}</div>
+      <div class="price">${formatPrice(p.price)}</div>
+      <div class="actions">
+        <button class="btn ghost" onclick="viewProduct(${p.id})">Ver</button>
+        <button class="btn primary" onclick="addToCart(${p.id})">Agregar</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* -------------------- BÚSQUEDA -------------------- */
+function doSearch(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if(!q) return renderProducts();
+  const res = products.filter(p => p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+  renderProducts(res);
+}
+
+/* -------------------- CARRITO (localStorage) -------------------- */
+function getCart(){ return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+function saveCart(cart){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartUI(); }
+function addToCart(id){
+  const prod = products.find(p=>p.id===id);
+  if(!prod) return;
+  const cart = getCart();
+  const found = cart.find(x=>x.id===id);
+  if(found) found.qty++;
+  else cart.push({id:prod.id, title:prod.title, price:prod.price, img:prod.img, qty:1});
+  saveCart(cart);
+  alert('Agregado: ' + prod.title);
+}
+function updateCartUI(){
+  document.getElementById('cartCount').textContent = getCart().reduce((s,i)=>s+i.qty,0);
+  const panel = document.getElementById('cartPanel');
+  const itemsEl = document.getElementById('cartItems');
+  const cart = getCart();
+  itemsEl.innerHTML = '';
+  if(cart.length===0){
+    itemsEl.innerHTML = '<div class="muted">No hay productos en el carrito.</div>';
+    document.getElementById('cartTotal').textContent = formatPrice(0);
+    return;
+  }
+  let total = 0;
+  cart.forEach(it=>{
+    total += it.price * it.qty;
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+      <img src="${it.img}" alt="${it.title}">
+      <div style="flex:1;">
+        <div style="font-weight:700">${it.title}</div>
+        <div class="muted">${formatPrice(it.price)} x ${it.qty}</div>
+        <div style="margin-top:8px;">
+          <button class="btn ghost" onclick="changeQty(${it.id}, -1)">-</button>
+          <button class="btn ghost" onclick="changeQty(${it.id}, 1)">+</button>
+          <button class="btn ghost" onclick="removeFromCart(${it.id})">Eliminar</button>
+        </div>
+      </div>
+    `;
+    itemsEl.appendChild(div);
+  });
+  document.getElementById('cartTotal').textContent = formatPrice(total);
+}
+function changeQty(id, delta){
+  const cart = getCart();
+  const it = cart.find(x=>x.id===id);
+  if(!it) return;
+  it.qty += delta;
+  if(it.qty <= 0) {
+    const idx = cart.findIndex(x=>x.id===id);
+    cart.splice(idx,1);
+  }
+  saveCart(cart);
+}
+function removeFromCart(id){
+  let cart = getCart();
+  cart = cart.filter(x=>x.id!==id);
+  saveCart(cart);
+}
+function toggleCart(){
+  const panel = document.getElementById('cartPanel');
+  panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+  if(panel.style.display === 'block') { updateCartUI(); panel.setAttribute('aria-hidden','false'); } else { panel.setAttribute('aria-hidden','true'); }
+}
+function clearCart(){ localStorage.removeItem(CART_KEY); updateCartUI(); }
+function checkout(){
+  const total = document.getElementById('cartTotal').textContent;
+  if(getCart().length === 0){ alert('Tu carrito está vacío'); return; }
+  alert('' + total + '\nTu compra se ha realizado exitosamente ✔');
+  clearCart();
+  document.getElementById('cartPanel').style.display='none';
+}
+
+/* -------------------- PRODUCT VIEW (simple) -------------------- */
+function viewProduct(id){
+  const p = products.find(x=>x.id===id);
+  if(!p) return;
+  alert(`${p.title}\n\n${p.desc}\n\nPrecio: ${formatPrice(p.price)}`);
+}
+
+/* -------------------- CAROUSEL -------------------- */
+function showSlide(n){
+  const slides = document.getElementById('slides');
+  const max = slides.children.length;
+  currentSlide = (n + max) % max;
+  slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+}
+function carouselNext(){ showSlide(currentSlide + 1); resetSlideInterval(); }
+function carouselPrev(){ showSlide(currentSlide - 1); resetSlideInterval(); }
+function startSlideInterval(){ slideInterval = setInterval(()=> showSlide(currentSlide + 1), 4500); }
+function resetSlideInterval(){ clearInterval(slideInterval); startSlideInterval(); }
+
+/* -------------------- CHATBOT (BÁSICO) -------------------- */
+function openChat(){
+  document.getElementById('chatbox').style.display = 'block';
+  document.getElementById('chatToggle').style.display = 'none';
+}
+function closeChat(){
+  document.getElementById('chatbox').style.display = 'none';
+  document.getElementById('chatToggle').style.display = 'inline-block';
+}
+function appendChat(who, text){
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.style.marginBottom = '8px';
+  if(who === 'user'){
+    div.style.textAlign = 'right';
+    div.innerHTML = `<div style="display:inline-block; background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#000; padding:8px 10px; border-radius:10px; font-weight:700">${text}</div>`;
+  } else {
+    div.style.textAlign = 'left';
+    div.innerHTML = `<div style="display:inline-block; background:rgba(255,255,255,0.03); color:var(--text); padding:8px 10px; border-radius:10px;">${text}</div>`;
+  }
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+function sendChatMessage(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  appendChat('user', text);
+  input.value = '';
+  // respuestas automatizadas simples (puedes reemplazar con API)
+  setTimeout(()=>{
+    const q = text.toLowerCase();
+    if(q.includes('precio')||q.includes('cuánto')||q.includes('cost')) appendChat('bot','Los precios aparecen en cada producto. ¿Deseas que agregue algo a tu carrito?');
+    else if(q.includes('envio')||q.includes('envío')) appendChat('bot','Ofrecemos varias opciones de envío: estándar, express y recogida en tienda (según ubicación).');
+    else if(q.includes('hola')||q.includes('hi')) appendChat('bot','¡Hola! ¿En qué puedo ayudarte hoy?');
+    else appendChat('bot','¡Gracias! Un agente te responderá pronto o escribe "productos" para ver destacados.');
+  }, 600);
+}
+
+/* -------------------- BACKGROUND / BANNER CUSTOM -------------------- */
+function promptBackground(){
+  const url = prompt('Pega la URL de la imagen de fondo (o deja vacío para cargar un archivo local):');
+  if(url){
+    setBackground(url);
+  } else {
+    // abrir selector local
+    document.getElementById('bgFile').click();
+  }
+}
+function setBackground(url){
+  document.getElementById('pageBody').style.backgroundImage = `url('${url}')`;
+  document.getElementById('pageBody').style.backgroundSize = 'cover';
+  document.getElementById('pageBody').style.backgroundPosition = 'center';
+}
+function uploadBackground(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    setBackground(evt.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+/* Cambiar banner */
+function setBannerUrl(url){ document.getElementById('bannerImg').src = url; }
+
+/* -------------------- INICIALIZACIÓN -------------------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  setYear();
+  renderProducts();
+  updateCartUI();
+  showSlide(0);
+  startSlideInterval();
+  // permite arrastrar-drop banner imagen (opcional)
+  const banner = document.getElementById('mainBanner');
+  banner.addEventListener('dragover', e=> e.preventDefault());
+  banner.addEventListener('drop', e=>{
+    e.preventDefault();
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = function(ev){ setBannerUrl(ev.target.result); };
+    r.readAsDataURL(f);
+  });
+
+  // Atajo: si pulsas "b" abre prompt para cambiar fondo (dev-friendly)
+  document.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='b') promptBackground(); });
+});
+</script>
+</body>
+</html>
